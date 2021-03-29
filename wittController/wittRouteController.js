@@ -14,11 +14,15 @@ exports.signUp = async (req, res) => {
     // );
 
     res.status(200).json({
-      success: 'true',
-      token,
-      data: {
-        details: data,
+      error: false,
+      details: {
+        token: token,
+        id: data._id,
+        name: data.name,
+        email: data.email,
       },
+      message: null,
+      status: 'success',
     });
   } catch (error) {
     res.status(400).json({
@@ -51,11 +55,18 @@ exports.login = async (req, res) => {
 
     const token = signToken(user._id);
     return res.status(200).json({
+      error: false,
+      details: {
+        token: token,
+        id: user._id,
+        name: user.name,
+        email: email,
+      },
+      message: null,
       status: 'success',
-      token: token,
     });
   } catch (error) {
-    res.status(200).json({
+    res.status(400).json({
       status: 'fail',
       token: error,
     });

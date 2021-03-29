@@ -12,6 +12,7 @@ mongoose.connect(DB).then((con) => {
 });
 
 app.use('/api/v1/witt', wittRouter);
+
 app.get('/',function  (req, res) {
   res.status(200).send('this witt ');
 });
