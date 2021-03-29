@@ -12,7 +12,8 @@ mongoose.connect(DB).then((con) => {
 });
 
 app.use('/api/v1/witt', wittRouter);
-app.get('/', function (req, res) {
+
+app.get('/',function  (req, res) {
   res.status(200).send('this witt ');
 });
 let port = process.env.PORT || 3000;
