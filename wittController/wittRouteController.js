@@ -1,11 +1,19 @@
 const mongoose = require('mongoose');
 const User = require('./../wittModel/userModel');
 const jwt = require('jsonwebtoken');
+const catchAsync = require('./../utils/catchAsync');
 const signToken = (id) => {
   return jwt.sign({ id }, 'this is the secret key for the witt user');
 };
-exports.signUp = async (req, res) => {
-  try {
+
+// const catchAsync = fn=>{
+//   return (req,res,next)=>{
+//     fn(req,res,next).catch(err=>next(err))
+//   }
+// }
+
+exports.signUp = catchAsync(async (req, res,next) => {
+  // try {
     const data = await User.create(req.body);
     const token = signToken(data._id);
     // jwt.sign(
@@ -24,18 +32,19 @@ exports.signUp = async (req, res) => {
       message: null,
       status: 'success',
     });
-  } catch (error) {
-    res.status(400).json({
-      status: 'fails',
-      data: {
-        details: error,
-      },
-    });
-  }
-};
+  // } catch (error) {
+  //   res.status(400).json({
+  //     status: 'fail',
+  //     message: error,
+     
+  //   });
+  // }
+});
 
-exports.login = async (req, res) => {
-  try {
+
+
+exports.login = catchAsync (async (req, res,next) => {
+  // try {
     const { email, password } = req.body;
     // email or password is not present.
     if (!email || !password) {
@@ -65,12 +74,35 @@ exports.login = async (req, res) => {
       message: null,
       status: 'success',
     });
-  } catch (error) {
-    res.status(400).json({
+  // } catch (error) {
+  //   res.status(400).json({
+  //     status: 'fail',
+  //     token: error,
+  //   });
+  // }
+})
+
+exports.protected = (req, res, next) => {
+  //  1: CHECKING IF THE TOKEN IS AVAILABLE IN THE HEADER
+  let token;
+
+  if (!req.headers) {
+    res.status(401).json({
       status: 'fail',
-      token: error,
+      message: 'Not an authorize user',
     });
+  } else {
+    token = req.headers.authorization.split(' ')[1];
+
+    console.log(token);
+    next();
   }
+
+  // 2: CHECKIGN IF THE TOKEN IS THE TOKEN IN VALID OR NOT
+
+  // 3: CHECK IF USER STILL EXISTS
+
+  // 4: CHECK IF USER CHANGED PASSWORD AFTER THE TOKEN HAS CHANGED
 };
 
 exports.test = (req, res) => {
